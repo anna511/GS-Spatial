@@ -51,6 +51,7 @@ library(regress) #to fit models
 
 #remove outliers (2.5 times the sd) before proceeding to analysis
 
+#modify phi.2 and phi values based on prior information in order to speed up the analysis process
 
 geno_spatial_snp <- function(data1, trait, genotype, plotSize, loc, kfold,mkfold){ 
   
