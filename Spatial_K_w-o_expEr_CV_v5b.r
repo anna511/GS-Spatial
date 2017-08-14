@@ -11,9 +11,9 @@ library(regress) #to fit models
 #data is expected to have no rows with all NA values 
 #genotype is the name of column containing genotypic predictor variable
 #trait is a vector of names of traits that needs to be tested - response variable
-#K is the relationship matrix from 'rrBLUP' OR snp is the snp data 
+#snp is the snp data 
   #snp <- load(".../V6_IITA_BeagleDosages_V100715_MAF01.Rdata")
-      #K matrix from snp data
+      #K matrix obtained from snp data
       #subsetting snp data - helps to remove clones that are not genotyped but phenotyped 
           #table(data1a[,genotype] %in% rownames(snps))  
           #snp2.names <- intersect(data1a[,genotype], rownames(snps))
@@ -61,10 +61,8 @@ geno_spatial_snp <- function(data1, trait, genotype, plotSize, loc, kfold,mkfold
 
   test.geno <- vector("list",mkfold)  
 
-  base.prmse <- base.pcor <- base.R.prmse <- base.R.pcor <- base.C.prmse <- matrix(NA,mkfold,kfold)  
-  base.C.pcor <- base.RC.prmse <- base.RC.pcor <- matrix(NA,mkfold,kfold)
-  base.fail <- base.R.fail <- base.C.fail <- base.RC.fail <- matrix(NA, mkfold,kfold)  
-  
+  base.prmse <- base.pcor <- base.fail <-  matrix(NA,mkfold,kfold)  
+    
   data1a <- na.omit(subset(data1,select = c("Range","Column",genotype,trait[i])))
   
   fixed.effect <- formula(paste(trait[i],"1", sep="~"))
@@ -104,90 +102,24 @@ geno_spatial_snp <- function(data1, trait, genotype, plotSize, loc, kfold,mkfold
 #phi and matrices for prmse and pcor
   phi <- seq(0.5,max(distMat), 0.5) 
 
-  model1.E.prmse.1 <- model1.E.pcor.1 <- model1.E.fail.1 <- model1.Er.prmse.1 <- model1.Er.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Er.fail.1 <- model1.Ec.prmse.1 <- model1.Ec.pcor.1 <- model1.Ec.fail.1 <-  matrix(NA,mkfold,length(phi))
-
-  model1.E.R.prmse.1 <- model1.E.R.pcor.1 <- model1.E.R.fail.1 <- model1.Er.R.prmse.1 <- model1.Er.R.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Er.R.fail.1 <- model1.Ec.R.prmse.1 <- model1.Ec.R.pcor.1 <- model1.Ec.R.fail.1 <- matrix(NA,mkfold,length(phi))
-
-  model1.E.C.prmse.1 <- model1.E.C.pcor.1 <- model1.E.C.fail.1 <- model1.Er.C.prmse.1 <- model1.Er.C.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Er.C.fail.1 <- model1.Ec.C.prmse.1 <- model1.Ec.C.pcor.1 <- model1.Ec.C.fail.1 <- matrix(NA,mkfold,length(phi))
-
-  model1.E.RC.prmse.1 <- model1.E.RC.pcor.1 <- model1.E.RC.fail.1 <- model1.Er.RC.prmse.1 <- model1.Er.RC.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Er.RC.fail.1 <- model1.Ec.RC.prmse.1 <- model1.Ec.RC.pcor.1 <- model1.Ec.RC.fail.1 <- matrix(NA,mkfold,length(phi))
-
   model1.G.prmse.1 <- model1.G.pcor.1 <- model1.G.fail.1 <- model1.Gr.prmse.1 <- model1.Gr.pcor.1 <- matrix(NA,mkfold,length(phi))
   model1.Gr.fail.1 <- model1.Gc.prmse.1 <- model1.Gc.pcor.1 <- model1.Gc.fail.1 <- matrix(NA,mkfold,length(phi))
-
-  model1.G.R.prmse.1 <- model1.G.R.pcor.1 <- model1.G.R.fail.1 <- model1.Gr.R.prmse.1 <- model1.Gr.R.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Gr.R.fail.1 <- model1.Gc.R.prmse.1 <- model1.Gc.R.pcor.1 <- model1.Gc.R.fail.1 <-  matrix(NA,mkfold,length(phi))
-
-  model1.G.C.prmse.1 <- model1.G.C.pcor.1 <- model1.G.C.fail.1 <- model1.Gr.C.prmse.1 <- model1.Gr.C.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Gr.C.fail.1 <- model1.Gc.C.prmse.1 <- model1.Gc.C.pcor.1 <- model1.Gc.C.fail.1 <- matrix(NA,mkfold,length(phi))
-
-  model1.G.RC.prmse.1 <- model1.G.RC.pcor.1 <- model1.G.RC.fail.1 <- model1.Gr.RC.prmse.1 <- model1.Gr.RC.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Gr.RC.fail.1 <- model1.Gc.RC.prmse.1 <- model1.Gc.RC.pcor.1 <- model1.Gc.RC.fail.1 <- matrix(NA,mkfold,length(phi))
 
   model1.S.prmse.1 <- model1.S.pcor.1 <- model1.S.fail.1 <- model1.Sr.prmse.1 <- model1.Sr.pcor.1 <- matrix(NA,mkfold,length(phi))
   model1.Sr.fail.1 <- model1.Sc.prmse.1 <- model1.Sc.pcor.1 <- model1.Sc.fail.1 <- matrix(NA,mkfold,length(phi))
 
-  model1.S.R.prmse.1 <- model1.S.R.pcor.1 <- model1.S.R.fail.1 <- model1.Sr.R.prmse.1 <- model1.Sr.R.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Sr.R.fail.1 <- model1.Sc.R.prmse.1 <- model1.Sc.R.pcor.1 <-  model1.Sc.R.fail.1 <- matrix(NA,mkfold,length(phi))
-
-  model1.S.C.prmse.1 <- model1.S.C.pcor.1 <- model1.S.C.fail.1 <- model1.Sr.C.prmse.1 <- model1.Sr.C.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Sr.C.fail.1 <- model1.Sc.C.prmse.1 <- model1.Sc.C.pcor.1 <- model1.Sc.C.fail.1 <- matrix(NA,mkfold,length(phi))
-
-  model1.S.RC.prmse.1 <- model1.S.RC.pcor.1 <- model1.S.RC.fail.1 <- model1.Sr.RC.prmse.1 <- model1.Sr.RC.pcor.1 <- matrix(NA,mkfold,length(phi))
-  model1.Sr.RC.fail.1 <- model1.Sc.RC.prmse.1 <- model1.Sc.RC.pcor.1 <- model1.Sc.RC.fail.1 <- matrix(NA,mkfold,length(phi))
-
   model2.AR.prmse.1 <- model2.AR.pcor.1 <- model2.AR.fail.1 <- model2.ARr.prmse.1 <- model2.ARr.pcor.1 <- matrix(NA,mkfold,length(phi.2))
   model2.ARr.fail.1 <- model2.ARc.prmse.1 <- model2.ARc.pcor.1 <- model2.ARc.fail.1 <- matrix(NA,mkfold,length(phi.2)) 
-
-  model2.AR.R.prmse.1 <- model2.AR.R.pcor.1 <- model2.AR.R.fail.1 <- model2.ARr.R.prmse.1 <- model2.ARr.R.pcor.1 <- matrix(NA,mkfold,length(phi.2))
-  model2.ARr.R.fail.1 <- model2.ARc.R.prmse.1 <- model2.ARc.R.pcor.1 <- model2.ARc.R.fail.1 <- matrix(NA,mkfold,length(phi.2)) 
-
-  model2.AR.C.prmse.1 <- model2.AR.C.pcor.1 <- model2.AR.C.fail.1 <- model2.ARr.C.prmse.1 <- model2.ARr.C.pcor.1 <- matrix(NA,mkfold,length(phi.2))
-  model2.ARr.C.fail.1 <- model2.ARc.C.prmse.1 <- model2.ARc.C.pcor.1 <- model2.ARc.C.fail.1 <- matrix(NA,mkfold,length(phi.2)) 
-
-  model2.AR.RC.prmse.1 <- model2.AR.RC.pcor.1 <- model2.AR.RC.fail.1 <- model2.ARr.RC.prmse.1 <- model2.ARr.RC.pcor.1 <- matrix(NA,mkfold,length(phi.2))
-  model2.ARr.RC.fail.1 <- model2.ARc.RC.prmse.1 <- model2.ARc.RC.pcor.1 <-  model2.ARc.RC.fail.1 <- matrix(NA,mkfold,length(phi.2)) 
-
-
-  model1.E.prmse.2 <- model1.E.pcor.2 <- model1.Er.prmse.2 <- model1.Er.pcor.2 <- model1.Ec.prmse.2 <- vector()
-  model1.Ec.pcor.2 <-  model1.E.R.prmse.2 <- model1.E.R.pcor.2 <- vector()
-  model1.Er.R.prmse.2 <- model1.Er.R.pcor.2 <- model1.Ec.R.prmse.2 <- model1.Ec.R.pcor.2 <-  vector()
-  model1.E.C.prmse.2 <- model1.E.C.pcor.2 <- model1.Er.C.prmse.2 <- model1.Er.C.pcor.2 <- vector()
-  model1.Ec.C.prmse.2 <- model1.Ec.C.pcor.2 <-  model1.E.RC.prmse.2 <- vector()
-  model1.E.RC.pcor.2 <- model1.Er.RC.prmse.2 <- model1.Er.RC.pcor.2 <- model1.Ec.RC.prmse.2 <- model1.Ec.RC.pcor.2 <- vector()
-  model1.E.fail.2 <- model1.Er.fail.2 <- model1.Ec.fail.2 <- model1.E.R.fail.2 <- model1.Er.R.fail.2 <- vector()
-  model1.Ec.R.fail.2 <- model1.E.C.fail.2 <- model1.Ec.C.fail.2 <- model1.Er.C.fail.2 <- model1.E.RC.fail.2<- vector()
-  model1.Er.RC.fail.2 <- model1.Ec.RC.fail.2 <- vector()
-  model1.G.prmse.2 <- model1.G.pcor.2 <- model1.Gr.prmse.2 <- model1.G.fail.2 <- model1.Gr.fail.2 <- vector()
-  model1.Gr.pcor.2 <- model1.Gc.prmse.2 <- model1.Gc.pcor.2 <-  model1.Gc.fail.2 <- model1.G.R.fail.2 <- vector()
-  model1.G.R.prmse.2 <- model1.G.R.pcor.2 <- model1.Gr.R.prmse.2 <- model1.Gr.R.pcor.2 <- model1.Gr.R.fail.2 <- model1.Gc.R.prmse.2 <- vector()
-  model1.Gc.R.pcor.2 <- model1.Gc.R.fail.2 <- model1.G.C.prmse.2 <- model1.G.C.pcor.2 <- model1.G.C.fail.2 <- vector()
-  model1.Gr.C.prmse.2 <- model1.Gr.C.pcor.2 <- model1.Gr.C.fail.2 <- model1.Gc.C.prmse.2 <- model1.Gc.C.pcor.2 <- model1.Gc.C.fail.2 <- vector()
-  model1.G.RC.prmse.2 <- model1.G.RC.pcor.2 <- model1.G.RC.fail.2 <-  model1.Gr.RC.prmse.2 <- model1.Gr.RC.pcor.2 <- model1.Gr.RC.fail.2 <- vector()
-  model1.Gc.RC.prmse.2 <- model1.Gc.RC.pcor.2 <- model1.Gc.RC.fail.2 <- model1.S.prmse.2 <- vector()
-  model1.S.pcor.2 <- model1.Sr.prmse.2 <- model1.Sr.pcor.2 <- model1.Sc.prmse.2 <- model1.Sc.pcor.2 <- vector()
-  model1.S.R.prmse.2 <- model1.S.R.pcor.2 <- model1.Sr.R.prmse.2 <- vector()
-  model1.Sr.R.pcor.2 <- model1.Sc.R.prmse.2 <- model1.Sc.R.pcor.2 <-  vector()
-  model1.S.C.prmse.2 <- model1.S.C.pcor.2 <- model1.Sr.C.prmse.2 <- model1.Sr.C.pcor.2 <- model1.Sc.C.prmse.2 <- vector()
-  model1.Sc.C.pcor.2 <-  model1.S.RC.prmse.2 <- model1.S.RC.pcor.2 <- vector()
-  model1.Sr.RC.prmse.2 <- model1.Sr.RC.pcor.2 <- model1.Sc.RC.prmse.2 <- model1.Sc.RC.pcor.2 <-  vector()
-  model1.S.fail.2 <- model1.Sr.fail.2 <- model1.Sc.fail.2 <- model1.S.R.fail.2 <- model1.Sr.R.fail.2 <- vector()
-  model1.Sc.R.fail.2 <- model1.S.C.fail.2 <- model1.Sr.C.fail.2 <- model1.Sc.C.fail.2 <- vector()
-  model1.S.RC.fail.2 <- model1.Sr.RC.fail.2<- model1.Sc.RC.fail.2 <- vector()
-  model2.AR.prmse.2 <- model2.AR.pcor.2 <- model2.ARr.prmse.2 <- model2.ARr.prmse.2 <- vector()
-  model2.ARc.prmse.2 <- model2.ARc.pcor.2 <-  model2.AR.R.prmse.2 <- vector()
-  model2.AR.R.pcor.2 <- model2.AR.C.prmse.2 <- model2.AR.C.pcor.2 <- model2.AR.RC.prmse.2 <- model2.AR.RC.pcor.2 <- vector()
-  model2.ARr.R.prmse.2 <- model2.ARr.R.pcor.2 <- model2.ARr.C.prmse.2 <- model2.ARr.C.pcor.2 <- model2.ARr.RC.prmse.2 <- vector()
-  model2.ARr.RC.pcor.2 <- model2.ARc.R.prmse.2 <- model2.ARc.R.pcor.2 <- model2.ARc.C.prmse.2 <- model2.ARc.C.pcor.2 <- vector()
-  model2.ARc.RC.prmse.2 <- model2.ARc.RC.pcor.2 <-  model2.AR.fail.2 <- model2.ARr.fail.2 <- vector()
-  model2.ARc.fail.2 <- model2.AR.R.fail.2 <- model2.ARr.R.fail.2 <- model2.ARc.R.fail.2 <- vector()
-  model2.AR.C.fail.2 <- model2.ARr.C.fail.2 <- model2.ARc.C.fail.2 <- model2.AR.RC.fail.2 <- vector()
-  model2.ARr.RC.fail.2 <- model2.ARc.RC.fail.2 <- model.phi <- vector()  
-
+                       
+  model1.G.prmse.2 <- model1.G.pcor.2 <- model1.Gr.prmse.2 <- model1.Gr.pcor.2  <- model1.G.fail.2 <- model1.Gr.fail.2 <- vector()
+  model1.Gc.prmse.2 <- model1.Gc.pcor.2 <-  model1.Gc.fail.2 <- vector()
+  
+  model1.S.prmse.2 <- model1.S.pcor.2 <- model1.Sr.prmse.2 <- model1.Sr.pcor.2 <- model1.Sc.prmse.2 <- model1.Sc.pcor.2 <- vector()
+  model1.S.fail.2 <- model1.Sr.fail.2 <- model1.Sc.fail.2 <- vector()
+  
+  model2.AR.prmse.2 <- model2.AR.pcor.2 <- model2.ARr.prmse.2 <- model2.ARr.pcor.2 <- vector()
+  model2.ARc.prmse.2 <- model2.ARc.pcor.2 <- model2.AR.fail.2 <- model2.ARr.fail.2 <- model2.ARc.fail.2 <- vector()
+  
 
 #k-fold cross-validation  
   #splitting data - same genotypes not present in training and test data
@@ -255,14 +187,12 @@ base.fail.2 <- sum(base.fail, na.rm = TRUE)
     
 #model 1 - add correlation structures to selected base model
   #updating base model to model1   
-  #Exponential, Gaussian, Spherical - isotropic, row, column, row + column directional 
+  #Gaussian and Spherical - isotropic, row, column, row + column directional 
   for(m in c(1:length(test.geno))){ 
-    model1.E.prmse <- model1.E.pcor <- model1.E.fail <- matrix(NA,kfold,length(phi))
     model1.G.prmse <- model1.G.pcor <- model1.G.fail <- matrix(NA,kfold,length(phi))
     model1.S.prmse <- model1.S.pcor <- model1.S.fail <- matrix(NA,kfold,length(phi))
     for (p in c(1:length(phi))){
-      spR.E <- exp(-(distMat/phi[p])) 
-
+      
       spR.G <- exp(-(distMat/phi[p])^2)
 
       distMat.s <- distMat
@@ -298,40 +228,7 @@ base.fail.2 <- sum(base.fail, na.rm = TRUE)
 
         idDist.test <- factor(as.character(test.data$Slno),levels =rownames(distMat))
         Ztest.spDist <- model.matrix(~idDist.test-1)        
-
-
-        if (all(is.nan(diag(spR.E)))){ 
-        model1.E <- "Pure.Nugget"
-        model1.E.prmse [s,p] <- "PN"
-        model1.E.pcor [s,p] <- "PN"
-        } else{
-          G.spR.E <- Z.spDist%*%spR.E%*%t(Z.spDist)
-          #iso - exponential
-          model1.E <- try(regress(y ~ X.train, ~ G.geno + G.spR.E, pos= rep(TRUE,3), tol = 1e-4,data = train.data),silent = TRUE)
-
-          if(class(model1.E) != "try-error"){
-
-          R.residual <- Identity * model1.E$sigma[[3]]
-
-          Khat <- K * model1.E$sigma[[1]] 
-          Shat <- spR.E * model1.E$sigma[[2]]
-          Vhat <- G.geno * model1.E$sigma[[1]] + G.spR.E * model1.E$sigma[[2]] + R.residual
-
-          gamma<- Khat %*% t(Z.geno) %*% solve(Vhat) %*% (y - model1.E$fitted)
-          delta <- Shat %*% t(Z.spDist) %*% solve(Vhat) %*% (y - model1.E$fitted)
-
-          gamma.test <- cbind(Ztest.geno %*% gamma, X.test %*% model1.E$beta)  
-          delta.test <- cbind(Ztest.spDist %*% delta, gamma.test)
-            yhat.test <- delta.test[,1] + delta.test[,2] + delta.test[,3]
-
-          model1.E.prmse[s,p] <- sqrt(mean((yhat.test - test.data[,trait[i]])^2))
-          model1.E.pcor[s,p] <- cor(yhat.test, test.data[,trait[i]])  
-          } else{
-            model1.E.fail[s,p] <- 1
-          }  # end of try 
-        } # end of else 
-print("iso-Exp")
-
+        
         if (all(is.nan(diag(spR.G)))){ 
         model1.G <- "Pure.Nugget"
         model1.G.prmse [s,p] <- "PN"
@@ -393,10 +290,6 @@ print("iso-Gaus")
 print("iso-sph")
         } # end of each CV 
       } # end of phi
-      model1.E.prmse.1[m,] <-  apply(model1.E.prmse,2,mean, na.rm = TRUE) 
-      model1.E.pcor.1[m,] <- apply(model1.E.pcor,2,mean, na.rm = TRUE) 
-      model1.E.fail.1[m,] <- apply(model1.E.fail,2,sum, na.rm = TRUE)       
-
       model1.G.prmse.1[m,] <- apply(model1.G.prmse,2,mean, na.rm = TRUE)
       model1.G.pcor.1[m,] <- apply(model1.G.pcor,2,mean, na.rm = TRUE)
       model1.G.fail.1[m,] <- apply(model1.G.fail,2,sum, na.rm = TRUE)      
@@ -405,16 +298,6 @@ print("iso-sph")
       model1.S.pcor.1[m,] <- apply(model1.S.pcor,2,mean, na.rm = TRUE) 
       model1.S.fail.1[m,] <- apply(model1.S.fail, 2, sum, na.rm = TRUE)                  
     } # end of multiple CVs
-
-    model1.E.prmse.2 <- apply(model1.E.prmse.1,2,mean) # for plotting CV prmse - plot this as bxpt and overlap with lines connecting min including the one value from base
-    phi.E.1 <- which(model1.E.prmse.2 == min(model1.E.prmse.2))
-    phi.E <- phi[phi.E.1]
-    model1.E.prmse.3 <- model1.E.prmse.2[phi.E.1] # for comparing various models
-
-    model1.E.pcor.2 <- apply(model1.E.pcor.1,2,mean) #for plotting CV pcor
-    model1.E.pcor.3 <- model1.E.pcor.2[which(model1.E.pcor.2 == max(model1.E.pcor.2))] #for comparing various models
-
-    model1.E.fail.2 <- apply(model1.E.fail.1,2,sum)    
 
     model1.G.prmse.2 <- apply(model1.G.prmse.1,2,mean) # for plotting CV prmse - plot this as bxpt and overlap with lines connecting min including the one value from base
     phi.G.1 <- which(model1.G.prmse.2 == min(model1.G.prmse.2))
@@ -438,15 +321,13 @@ print("iso-sph")
     
 print("end of iso")  
 
-  #Exponential,Gaussian,Spherical - range direction  
-  for(m in c(1:length(test.geno))){ 
-    model1.Er.prmse <- model1.Er.pcor <- model1.Er.fail <- matrix(NA,kfold,length(phi))    
+  #Gaussian and Spherical - range direction  
+  for(m in c(1:length(test.geno))){     
     model1.Gr.prmse <- model1.Gr.pcor <- model1.Gr.fail <- matrix(NA,kfold,length(phi))
     model1.Sr.prmse <- model1.Sr.pcor <- model1.Sr.fail <- matrix(NA,kfold,length(phi))
    
     for (p in c(1:length(phi))){
-      spR.E <-  exp(-(rowDistMat2/phi[p]))  
-
+      
       spR.G <-  exp(-(rowDistMat2/phi[p])^2)
 
       rowDistMat2.s <- rowDistMat2
@@ -483,38 +364,8 @@ print("end of iso")
         idDist.test <- factor(as.character(test.data$Slno),levels =rownames(distMat))
         Ztest.spDist <- model.matrix(~idDist.test-1)
         
-        if (all(is.nan(diag(spR.E)))){ 
-        model1.Er <- "Pure.Nugget"
-        model1.Er.prmse [s,p] <- "PN"
-        model1.Er.pcor [s,p] <- "PN"
-        } else{
-          G.spR.E <- Z.spDist%*%spR.E%*%t(Z.spDist)
-          model1.Er <- try(regress(y ~ X.train, ~ G.geno + G.spR.E, pos= rep(TRUE,3), tol = 1e-4,data = train.data),silent = TRUE)
 
-          if(class(model1.Er) != "try-error"){
-
-          R.residual <- Identity * model1.Er$sigma[[3]]
-
-          Khat <- K * model1.Er$sigma[[1]] 
-          Shat <- spR.E * model1.Er$sigma[[2]]
-          Vhat <- G.geno * model1.Er$sigma[[1]] + G.spR.E * model1.Er$sigma[[2]] + R.residual
-
-          gamma<- Khat %*% t(Z.geno) %*% solve(Vhat) %*% (y - model1.Er$fitted)
-          delta <- Shat %*% t(Z.spDist) %*% solve(Vhat) %*% (y - model1.Er$fitted)         
-
-          gamma.test <- cbind(Ztest.geno %*% gamma, X.test %*% model1.Er$beta)
-          delta.test <- cbind(Ztest.spDist %*% delta, gamma.test)
-            yhat.test <- delta.test[,1] + delta.test[,2] + delta.test[,3]
-
-          model1.Er.prmse[s,p] <- sqrt(mean((yhat.test - test.data[,trait[i]])^2))
-          model1.Er.pcor[s,p] <- cor(yhat.test, test.data[,trait[i]])  
-          } else{
-            model1.Er.fail[s,p] <- 1
-          }        # end of try 
-        } # end of else     
-
-print("range -exp")
-      if (all(is.nan(diag(spR.G)))){ 
+        if (all(is.nan(diag(spR.G)))){ 
         model1.Gr <- "Pure.Nugget"
         model1.Gr.prmse [s,p] <- "PN"
         model1.Gr.pcor [s,p] <- "PN"
@@ -577,10 +428,7 @@ print("range - Gaus")
         } # end of each CV 
       } # end of phi
 print("range - Sph")
-      model1.Er.prmse.1[m,] <-  apply(model1.Er.prmse,2,mean, na.rm = TRUE) 
-      model1.Er.pcor.1[m,] <- apply(model1.Er.pcor,2,mean, na.rm = TRUE) 
-      model1.Er.fail.1[m,] <- apply(model1.Er.fail,2,sum, na.rm = TRUE)
-      
+            
       model1.Gr.prmse.1[m,] <- apply(model1.Gr.prmse,2,mean,na.rm = TRUE)
       model1.Gr.pcor.1[m,] <- apply(model1.Gr.pcor,2,mean,na.rm = TRUE)
       model1.Gr.fail.1[m,] <- apply(model1.Gr.fail,2,sum,na.rm = TRUE)  
@@ -589,18 +437,7 @@ print("range - Sph")
       model1.Sr.pcor.1[m,] <- apply(model1.Sr.pcor,2,mean,na.rm = TRUE) 
       model1.Sr.fail.1[m,] <- apply(model1.Sr.fail,2,sum, na.rm = TRUE)                  
     } # end of multiple CVs
-print("range - .1")
-
-    model1.Er.prmse.2 <- apply(model1.Er.prmse.1,2,mean) # for plotting CV prmse
-    phi.Er.1 <- which(model1.Er.prmse.2 == min(model1.Er.prmse.2))
-    phi.Er <- phi[phi.Er.1]
-    model1.Er.prmse.3 <- model1.Er.prmse.2[phi.Er.1] # for comparing various models
-
-    model1.Er.pcor.2 <- apply(model1.Er.pcor.1,2,mean) #for plotting CV pcor
-    model1.Er.pcor.3 <- model1.Er.pcor.2[which(model1.Er.pcor.2 == max(model1.Er.pcor.2))] #for comparing various models  
-
-    model1.Er.fail.2 <- apply(model1.Er.fail.1,2,sum)
-    
+      
     model1.Gr.prmse.2 <- apply(model1.Gr.prmse.1,2,mean) # for plotting CV prmse
     phi.Gr.1 <- which(model1.Gr.prmse.2 == min(model1.Gr.prmse.2))
     phi.Gr <- phi[phi.Gr.1]
@@ -623,12 +460,12 @@ print("range - .1")
     
 print("end of range direction")
 
-  #Exponential, Gaussian, Spherical - column direction  
+  #Gaussian and Spherical - column direction  
   for(m in c(1:length(test.geno))){ 
-    model1.Ec.prmse <- model1.Ec.pcor <- model1.Ec.fail <- matrix(NA,kfold,length(phi))
     model1.Gc.prmse <- model1.Gc.pcor <- model1.Gc.fail <- matrix(NA,kfold,length(phi))
     model1.Sc.prmse <- model1.Sc.pcor <- model1.Sc.fail <- matrix(NA,kfold,length(phi))
     for (p in c(1:length(phi))){
+      
       spR.E <-  exp(-(colDistMat2/phi[p])) 
 
       spR.G <-  exp(-(colDistMat2/phi[p])^2)
@@ -667,38 +504,7 @@ print("end of range direction")
         idDist.test <- factor(as.character(test.data$Slno),levels =rownames(distMat))
         Ztest.spDist <- model.matrix(~idDist.test-1)     
 
-
-        if (all(is.nan(diag(spR.E)))){ 
-        model1.Ec <- "Pure.Nugget"
-        model1.Ec.prmse [s,p] <- "PN"
-        model1.Ec.pcor [s,p] <- "PN"
-        } else{
-          G.spR.E <- Z.spDist%*%spR.E%*%t(Z.spDist)
-          model1.Ec <- try(regress(y ~ X.train, ~ G.geno + G.spR.E, pos= rep(TRUE,3), tol = 1e-4,data = train.data),silent = TRUE)
-
-          if(class(model1.Ec) != "try-error"){
-
-          R.residual <- Identity * model1.Ec$sigma[[3]]
-
-          Khat <- K * model1.Ec$sigma[[1]] 
-          Shat <- spR.E * model1.Ec$sigma[[2]]
-          Vhat <- G.geno * model1.Ec$sigma[[1]] + G.spR.E * model1.Ec$sigma[[2]] + R.residual
-
-          gamma<- Khat %*% t(Z.geno) %*% solve(Vhat) %*% (y - model1.Ec$fitted)
-          delta <- Shat %*% t(Z.spDist) %*% solve(Vhat) %*% (y - model1.Ec$fitted)
-         
-          gamma.test <- cbind(Ztest.geno %*% gamma, X.test %*% model1.Ec$beta)
-          delta.test <- cbind(Ztest.spDist %*% delta, gamma.test)
-            yhat.test <- delta.test[,1] + delta.test[,2] + delta.test[,3]
-
-          model1.Ec.prmse[s,p] <- sqrt(mean((yhat.test - test.data[,trait[i]])^2))
-          model1.Ec.pcor[s,p] <- cor(yhat.test, test.data[,trait[i]])  
-          }else{
-            model1.Ec.fail[s,p] <- 1
-          }       # end of try     
-        } # end of else  
-print("column - exp")   
-
+       
         if (all(is.nan(diag(spR.G)))){ 
         model1.Gc <- "Pure.Nugget"
         model1.Gc.prmse [s,p] <- "PN"
@@ -762,10 +568,7 @@ print("column - Gaus")
 print("column - Sph")
         } # end of each CV 
       } # end of phi
-      model1.Ec.prmse.1[m,] <-  apply(model1.Ec.prmse,2,mean, na.rm = TRUE) 
-      model1.Ec.pcor.1[m,] <- apply(model1.Ec.pcor,2,mean,na.rm = TRUE)  
-      model1.Ec.fail.1[m,] <- apply(model1.Ec.fail,2,sum,na.rm = TRUE)
- 
+       
       model1.Gc.prmse.1[m,] <-  apply(model1.Gc.prmse,2,mean,na.rm = TRUE) 
       model1.Gc.pcor.1[m,] <- apply(model1.Gc.pcor,2,mean,na.rm = TRUE)
       model1.Gc.fail.1[m,] <- apply(model1.Gc.fail,2,sum, na.rm = TRUE) 
@@ -775,16 +578,6 @@ print("column - Sph")
       model1.Sc.fail.1[m,] <- apply(model1.Sc.fail,2,sum, na.rm = TRUE) 
     } # end of multiple CVs
 print("column - CVs")
-
-    model1.Ec.prmse.2 <- apply(model1.Ec.prmse.1,2,mean) # for plotting CV prmse
-    phi.Ec.1 <- which(model1.Ec.prmse.2 == min(model1.Ec.prmse.2))
-    phi.Ec <- phi[phi.Ec.1]
-    model1.Ec.prmse.3 <- model1.Ec.prmse.2[phi.Ec.1] # for comparing various models
-
-    model1.Ec.pcor.2 <- apply(model1.Ec.pcor.1,2,mean) #for plotting CV pcor
-    model1.Ec.pcor.3 <- model1.Ec.pcor.2[which(model1.Ec.pcor.2 == max(model1.Ec.pcor.2))] #for comparing various models 
-
-    model1.Ec.fail.2 <- apply(model1.Ec.fail.1,2,sum)
 
     model1.Gc.prmse.2 <- apply(model1.Gc.prmse.1,2,mean) # for plotting CV prmse
     phi.Gc.1 <- which(model1.Gc.prmse.2 == min(model1.Gc.prmse.2))
@@ -807,7 +600,7 @@ print("column - CVs")
     model1.Sc.fail.2 <- apply(model1.Sc.fail.1,2,sum)
 print("end of column dir")  
 
-#model 2 - AR1 models 
+#model 2 - power models 
   #updating base model to model2 
   #AR1 - isotropic, row, colum, and row + colum direction 
   for(m in c(1:length(test.geno))){ 
@@ -976,34 +769,27 @@ print("end of AR")
 #best model from each cross-validation set from all spatial correlation structures
 model1.prmse.2 <- model2.prmse.2 <- model1.pcor.2 <- model2.pcor.2 <- model.prmse <- model.pcor <- model.fail <- NULL
 
-  model1.prmse.2 <- cbind(model1.E.prmse.2, model1.Er.prmse.2, model1.Ec.prmse.2, 
-                      model1.G.prmse.2, model1.Gr.prmse.2, model1.Gc.prmse.2, model1.S.prmse.2, 
+  model1.prmse.2 <- cbind(model1.G.prmse.2, model1.Gr.prmse.2, model1.Gc.prmse.2, model1.S.prmse.2, 
                       model1.Sr.prmse.2, model1.Sc.prmse.2)                   
                       
   model2.prmse.2 <- cbind(model2.AR.prmse.2, model2.ARr.prmse.2, model2.ARc.prmse.2)
                      
-  model1.pcor.2 <- cbind(model1.E.pcor.2, model1.Er.pcor.2, model1.Ec.pcor.2, model1.G.pcor.2, 
-                      model1.Gr.pcor.2, model1.Gc.pcor.2, model1.S.pcor.2, model1.Sr.pcor.2, 
-                      model1.Sc.pcor.2)                   
+  model1.pcor.2 <- cbind(model1.G.pcor.2, model1.Gr.pcor.2, model1.Gc.pcor.2, 
+                         model1.S.pcor.2, model1.Sr.pcor.2, model1.Sc.pcor.2)                   
                       
   model2.pcor.2 <- cbind(model2.AR.pcor.2, model2.ARr.pcor.2, model2.ARc.pcor.2)
                      
-  model.prmse <- cbind(base.prmse.2, model1.E.prmse.3, model1.Er.prmse.3, model1.Ec.prmse.3, 
-                      model1.G.prmse.3, model1.Gr.prmse.3, model1.Gc.prmse.3, model1.S.prmse.3, 
-                      model1.Sr.prmse.3, model1.Sc.prmse.3, model2.AR.prmse.3, model2.ARr.prmse.3, 
-                      model2.ARc.prmse.3)
+  model.prmse <- cbind(base.prmse.2, model1.G.prmse.3, model1.Gr.prmse.3, model1.Gc.prmse.3, model1.S.prmse.3, 
+                      model1.Sr.prmse.3, model1.Sc.prmse.3, model2.AR.prmse.3, model2.ARr.prmse.3, model2.ARc.prmse.3)
                      
 
-  model.pcor <- cbind(base.pcor.2, model1.E.pcor.3, model1.Er.pcor.3, model1.Ec.pcor.3, 
-                      model1.G.pcor.3, model1.Gr.pcor.3, model1.Gc.pcor.3, model1.S.pcor.3, 
-                      model1.Sr.pcor.3, model1.Sc.pcor.3, model2.AR.pcor.3, model2.ARr.pcor.3, 
-                      model2.ARc.pcor.3)
+  model.pcor <- cbind(base.pcor.2, model1.G.pcor.3, model1.Gr.pcor.3, model1.Gc.pcor.3, model1.S.pcor.3, 
+                      model1.Sr.pcor.3, model1.Sc.pcor.3, model2.AR.pcor.3, model2.ARr.pcor.3, model2.ARc.pcor.3)
 
-  model.fail <- rbind(base.fail.2, model1.E.fail.2, model1.Er.fail.2, model1.Ec.fail.2, model1.G.fail.2, 
-                      model1.Gr.fail.2, model1.Gc.fail.2, model1.S.fail.2, model1.Sr.fail.2, 
+  model.fail <- rbind(base.fail.2, model1.G.fail.2, model1.Gr.fail.2, model1.Gc.fail.2, model1.S.fail.2, model1.Sr.fail.2, 
                       model1.Sc.fail.2, model2.AR.fail.2, model2.ARr.fail.2, model2.ARc.fail.2)
                         
-  model.phi <- cbind(0, phi.E, phi.Er, phi.Ec, phi.G, phi.Gr, phi.Gc, phi.S, phi.Sr, phi.Sc, phi.AR, phi.ARr, phi.ARc) 
+  model.phi <- cbind(0, phi.G, phi.Gr, phi.Gc, phi.S, phi.Sr, phi.Sc, phi.AR, phi.ARr, phi.ARc) 
   
   #patch work
   if (nrow(model.prmse) >1){
@@ -1053,21 +839,18 @@ model1.prmse.2 <- model2.prmse.2 <- model1.pcor.2 <- model2.pcor.2 <- model.prms
 
  #spatial relationship matrices
 
-  spR.E <- exp(-(distMat/phi.win)) 
   spR.G <- exp(-(distMat/phi.win)^2)
   distMat.s <- distMat
   distMat.s[distMat.s > phi.win] <- NA     
   spR.S <- 1-(1.5*(distMat.s/phi.win)) + 0.5*((distMat.s/phi.win)^3)
   spR.S[is.na(spR.S)] <- 0 
 
-  spR.Er <-  exp(-(rowDistMat2/phi.win))
   spR.Gr <-  exp(-(rowDistMat2/phi.win)^2)
   rowDistMat2.sr <- rowDistMat2
   rowDistMat2.sr[rowDistMat2.sr > phi.win] <- NA
   spR.Sr <- 1-(1.5*(rowDistMat2.sr/phi.win)) + 0.5*((rowDistMat2.sr/phi.win)^3)
   spR.Sr[is.na(spR.Sr)] <- 0 
 
-  spR.Ec <-  exp(-(colDistMat2/phi.win))
   spR.Gc <-  exp(-(colDistMat2/phi.win)^2)
   rowDistMat2.sc <- rowDistMat2
   rowDistMat2.sc[rowDistMat2.sc > phi.win] <- NA
@@ -1079,15 +862,12 @@ model1.prmse.2 <- model2.prmse.2 <- model1.pcor.2 <- model2.pcor.2 <- model.prms
   cAR <- phi.win^colDistMat2  
 
 
-  G.spR.E <- Z.spDist %*% spR.E %*% t(Z.spDist)
   G.spR.G <- Z.spDist%*%spR.G%*%t(Z.spDist)
   G.spR.S <- Z.spDist%*%spR.S%*%t(Z.spDist)
 
-  G.spR.Er <- Z.spDist%*%spR.Er%*%t(Z.spDist)
   G.spR.Gr <- Z.spDist%*%spR.Gr%*%t(Z.spDist)
   G.spR.Sr <- Z.spDist%*%spR.Sr%*%t(Z.spDist)
 
-  G.spR.Ec <- Z.spDist%*%spR.Ec%*%t(Z.spDist)
   G.spR.Gc <- Z.spDist%*%spR.Gc%*%t(Z.spDist)
   G.spR.Sc <- Z.spDist%*%spR.Sc%*%t(Z.spDist)
 
@@ -1102,22 +882,18 @@ model1.prmse.2 <- model2.prmse.2 <- model1.pcor.2 <- model2.pcor.2 <- model.prms
 model <- switch(phi.1,
      "1" <- regress(y ~ X.mat, ~geno, pos = rep(TRUE,2), tol = 1e-4, data = data2), 
      
-     "2" <- regress(y ~ X.mat, ~geno + G.spR.E, pos= rep(TRUE,3), tol = 1e-4, data = data2),
-     "3" <- regress(y ~ X.mat, ~geno + G.spR.Er, pos= rep(TRUE,3), tol = 1e-4,data = data2),
-     "4" <- regress(y ~ X.mat, ~geno + G.spR.Ec, pos= rep(TRUE,3), tol = 1e-4,data = data2),
+     "2" <- regress(y ~ X.mat, ~geno + G.spR.G, pos= rep(TRUE,3), tol = 1e-4, data = data2),
+     "3" <- regress(y ~ X.mat, ~geno + G.spR.Gr, pos= rep(TRUE,3), tol = 1e-4,data = data2),
+     "4" <- regress(y ~ X.mat, ~geno + G.spR.Gc, pos= rep(TRUE,3), tol = 1e-4,data = data2),
           
-     "5" <- regress(y ~ X.mat, ~geno + G.spR.G, pos= rep(TRUE,3), tol = 1e-4, data = data2),
-     "6" <- regress(y ~ X.mat, ~geno + G.spR.Gr, pos= rep(TRUE,3), tol = 1e-4,data = data2),
-     "7" <- regress(y ~ X.mat, ~geno + G.spR.Gc, pos= rep(TRUE,3), tol = 1e-4,data = data2),
+     "5" <- regress(y ~ X.mat, ~geno + G.spR.S, pos= rep(TRUE,3), tol = 1e-4, data = data2),
+     "6" <- regress(y ~ X.mat, ~geno + G.spR.Sr, pos= rep(TRUE,3), tol = 1e-4,data = data2),
+     "7" <- regress(y ~ X.mat, ~geno + G.spR.Sc, pos= rep(TRUE,3), tol = 1e-4,data = data2),
           
-     "8" <- regress(y ~ X.mat, ~geno + G.spR.S, pos= rep(TRUE,3), tol = 1e-4, data = data2),
-     "9" <- regress(y ~ X.mat, ~geno + G.spR.Sr, pos= rep(TRUE,3), tol = 1e-4,data = data2),
-     "10" <- regress(y ~ X.mat, ~geno + G.spR.Sc, pos= rep(TRUE,3), tol = 1e-4,data = data2),
-          
-     "11" <- regress(y ~ X.mat, ~geno + G.spR.AR, pos= rep(TRUE,3), tol = 1e-4,data = data2),
-     "12" <- regress(y ~ X.mat, ~geno + G.spR.ARr, pos= rep(TRUE,3), tol = 1e-4,data = data2),
-     "13" <- regress(y ~ X.mat, ~geno + G.spR.ARc, pos= rep(TRUE,3), tol = 1e-4,data = data2),
-          
+     "8" <- regress(y ~ X.mat, ~geno + G.spR.AR, pos= rep(TRUE,3), tol = 1e-4,data = data2),
+     "9" <- regress(y ~ X.mat, ~geno + G.spR.ARr, pos= rep(TRUE,3), tol = 1e-4,data = data2),
+     "10" <- regress(y ~ X.mat, ~geno + G.spR.ARc, pos= rep(TRUE,3), tol = 1e-4,data = data2),
+                        
     regress(y ~ X.mat, ~geno, pos = rep(TRUE,2), tol = 1e-4, data = data2)
     )
 
